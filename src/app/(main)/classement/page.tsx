@@ -23,21 +23,11 @@ export default function ClassementPage() {
       <OfflineBanner cachedAt={cachedAt} />
       <h1 className="text-xl font-bold">Classement</h1>
 
-      <Tabs defaultValue="teams">
+      <Tabs defaultValue="individual">
         <TabsList className="w-full">
-          <TabsTrigger value="teams">Équipes</TabsTrigger>
           <TabsTrigger value="individual">Individuel</TabsTrigger>
+          <TabsTrigger value="teams">Équipes</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="teams" className="flex flex-col gap-4 pt-4">
-          <Podium
-            entries={teams.slice(0, 3).map((t) => ({ id: t.team_id, label: t.name, points: t.points, color: t.color }))}
-          />
-          <LeaderboardList
-            rows={teams.map((t) => ({ id: t.team_id, primaryLabel: t.name, points: t.points, color: t.color }))}
-            highlightId={participant?.team_id}
-          />
-        </TabsContent>
 
         <TabsContent value="individual" className="flex flex-col gap-4 pt-4">
           <Podium
@@ -65,6 +55,16 @@ export default function ClassementPage() {
               color: p.team_color,
             }))}
             highlightId={participant?.id}
+          />
+        </TabsContent>
+
+        <TabsContent value="teams" className="flex flex-col gap-4 pt-4">
+          <Podium
+            entries={teams.slice(0, 3).map((t) => ({ id: t.team_id, label: t.name, points: t.points, color: t.color }))}
+          />
+          <LeaderboardList
+            rows={teams.map((t) => ({ id: t.team_id, primaryLabel: t.name, points: t.points, color: t.color }))}
+            highlightId={participant?.team_id}
           />
         </TabsContent>
       </Tabs>

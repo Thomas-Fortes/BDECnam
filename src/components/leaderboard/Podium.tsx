@@ -9,9 +9,10 @@ export interface PodiumEntry {
   color?: string | null;
 }
 
-const ORDER = [1, 0, 2]; // 2e - 1er - 3e
-const HEIGHTS = ["h-24", "h-32", "h-20"];
-const AVATAR_SIZE = ["lg", "xl", "lg"] as const;
+const ORDER = [1, 0, 2]; // affichage : 2e - 1er - 3e
+// Indexés par rang (0 = 1er, 1 = 2e, 2 = 3e) : le 1er doit être le plus grand.
+const HEIGHTS = ["h-32", "h-24", "h-20"];
+const AVATAR_SIZE = ["xl", "lg", "lg"] as const;
 
 export function Podium({ entries }: { entries: PodiumEntry[] }) {
   const top3 = entries.slice(0, 3);
