@@ -14,7 +14,7 @@ Supabase (Postgres, Auth anonyme, Realtime, Storage), déploiement Vercel.
    Sign-Ins*. Indispensable, c'est ce qui permet aux participants de
    s'inscrire sans e-mail.
 3. Va dans SQL Editor et exécute les fichiers de `supabase/migrations/` **dans
-   l'ordre** (0001 → 0007). Chaque fichier est commenté et idempotent au sens
+   l'ordre** (0001 → 0008). Chaque fichier est commenté et idempotent au sens
    où il ne doit être exécuté qu'une fois sur un projet neuf.
    - `0001_schema.sql` : tables, types, extension `pgcrypto`.
    - `0002_functions.sql` : fonctions RPC (inscription, PIN orga, etc.).
@@ -26,6 +26,12 @@ Supabase (Postgres, Auth anonyme, Realtime, Storage), déploiement Vercel.
      (`service_role` uniquement).
    - `0007_hardening.sql` : durcissement suite à l'audit `get_advisors`
      (search_path, policies RLS optimisées, index FK manquants).
+   - `0008_fix_pgcrypto_search_path.sql` : correctif — sur Supabase,
+     `pgcrypto` (donc `crypt()`/`gen_salt()`) est installé dans le schéma
+     `extensions`, pas `public`. Les fonctions `join_wei`, `verify_orga_pin`,
+     `set_wei_code`, `set_orga_pin`, `seed_set_secrets` doivent inclure
+     `extensions` dans leur `search_path` pour trouver `crypt()`, sinon
+     PostgREST renvoie 404 sur tout appel.
 4. Récupère dans *Project Settings → API* : l'URL du projet, la clé `anon`
    et la clé `service_role`.
 
