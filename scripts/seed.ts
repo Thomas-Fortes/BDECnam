@@ -36,10 +36,10 @@ const LAST_NAMES = [
 ];
 
 const TEAMS = [
-  { name: "Les Flamants Roses", color: "#EC4899" },
-  { name: "Les Loups Gris", color: "#64748B" },
-  { name: "Les Tigres Dorés", color: "#F59E0B" },
-  { name: "Les Requins Bleus", color: "#3B82F6" },
+  { name: "Les Flamants Roses", color: "#FF97D6" },
+  { name: "Les Requins Turquoise", color: "#00DEB5" },
+  { name: "Les Tigres Dorés", color: "#FFC501" },
+  { name: "Les Loups Bleus", color: "#3030D0" },
 ];
 
 const START_DATE = "2026-10-02";

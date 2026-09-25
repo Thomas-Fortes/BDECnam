@@ -4,13 +4,13 @@ export const TIMEZONE = "Europe/Paris";
 
 export const QUICK_POINT_AMOUNTS = [5, 10, 20, -5] as const;
 
+// Palette de la charte BDE CIAA (Figma "DA & logo").
 export const DEFAULT_TEAM_COLORS = [
-  "#EC4899", // rose
-  "#3B82F6", // bleu
-  "#F59E0B", // ambre
-  "#22C55E", // vert
-  "#8B5CF6", // violet
-  "#F97316", // orange
+  "#3030D0", // bleu (BDE)
+  "#FFC501", // jaune (Events)
+  "#FF4800", // orange (Clubs)
+  "#FF97D6", // rose (Aide)
+  "#00DEB5", // turquoise (Intégration)
 ];
 
 export const ACTIVITY_TYPE_LABELS: Record<ActivityType, string> = {

@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, PartyPopper, WifiOff } from "lucide-react";
+import { Loader2, WifiOff } from "lucide-react";
+import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -123,10 +124,12 @@ export default function InscriptionPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-4 py-8">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <PartyPopper className="size-10 text-primary" />
-        <h1 className="text-2xl font-bold">WEI 2026</h1>
-        <p className="text-sm text-muted-foreground">Rejoins le week-end d&apos;intégration en quelques secondes !</p>
+      <div className="flex flex-col items-center gap-3 text-center">
+        <Logo size="lg" />
+        <div>
+          <h1 className="text-xl font-bold">WEI 2026</h1>
+          <p className="text-sm text-muted-foreground">L&apos;énergie du campus — rejoins le WEI en quelques secondes !</p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">

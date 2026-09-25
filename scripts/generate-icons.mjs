@@ -1,5 +1,6 @@
-// Génère des icônes PWA basiques (carré violet + "W" blanc stylisé) en PNG,
-// sans dépendance externe (zlib natif). À remplacer par le vrai logo du BDE.
+// Génère les icônes PWA à partir de l'identité BDE CIAA (carré bleu #3030D0
+// + sparkle blanc à 4 branches, repris du badge "BDE" de la charte Figma),
+// en PNG, sans dépendance externe (zlib natif).
 import { deflateSync } from "node:zlib";
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -8,7 +9,7 @@ import { dirname, join } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = join(__dirname, "..", "public", "icons");
 
-const PRIMARY = [0x6d, 0x28, 0xd9]; // #6D28D9
+const PRIMARY = [0x30, 0x30, 0xd0]; // #3030D0
 
 function crc32(buf) {
   let c;
@@ -35,18 +36,40 @@ function chunk(type, data) {
   return Buffer.concat([lenBuf, typeBuf, data, crcBuf]);
 }
 
-// Dessine un carré arrondi violet avec un simple pictogramme "fête" (confettis)
-// approximé par quelques pixels blancs — volontairement minimaliste.
+// Point-in-polygon (ray casting).
+function inPolygon(x, y, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i];
+    const [xj, yj] = poly[j];
+    const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+function sparklePolygon(cx, cy, rOuter, rInner) {
+  const pts = [];
+  for (let i = 0; i < 8; i++) {
+    const angle = (Math.PI / 4) * i - Math.PI / 2; // premier point vers le haut
+    const r = i % 2 === 0 ? rOuter : rInner;
+    pts.push([cx + r * Math.cos(angle), cy + r * Math.sin(angle)]);
+  }
+  return pts;
+}
+
 function drawIcon(size) {
   const pixels = Buffer.alloc(size * size * 4);
-  const radius = Math.round(size * 0.18);
+  const radius = Math.round(size * 0.2);
+  const cx = size / 2;
+  const cy = size / 2;
+  const star = sparklePolygon(cx, cy, size * 0.34, size * 0.12);
 
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const i = (y * size + x) * 4;
 
-      // coins arrondis : hors-rayon dans les coins => transparent
-      const cornerDist = (cx, cy) => Math.hypot(x - cx, y - cy);
+      const cornerDist = (ccx, ccy) => Math.hypot(x - ccx, y - ccy);
       let inside = true;
       if (x < radius && y < radius) inside = cornerDist(radius, radius) <= radius;
       else if (x >= size - radius && y < radius) inside = cornerDist(size - radius, radius) <= radius;
@@ -58,48 +81,16 @@ function drawIcon(size) {
         continue;
       }
 
-      pixels[i] = PRIMARY[0];
-      pixels[i + 1] = PRIMARY[1];
-      pixels[i + 2] = PRIMARY[2];
-      pixels[i + 3] = 255;
-    }
-  }
-
-  // Pictogramme simple : un rond blanc central (façon "soleil/fête")
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = size * 0.22;
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      if (Math.hypot(x - cx, y - cy) <= r) {
-        const i = (y * size + x) * 4;
+      if (inPolygon(x + 0.5, y + 0.5, star)) {
         pixels[i] = 255;
         pixels[i + 1] = 255;
         pixels[i + 2] = 255;
         pixels[i + 3] = 255;
-      }
-    }
-  }
-
-  // quelques "confettis" (petits carrés blancs) autour
-  const confettis = [
-    [0.2, 0.25], [0.78, 0.22], [0.25, 0.78], [0.8, 0.75], [0.5, 0.12],
-  ];
-  const dot = Math.max(2, Math.round(size * 0.035));
-  for (const [fx, fy] of confettis) {
-    const px = Math.round(size * fx);
-    const py = Math.round(size * fy);
-    for (let dy = -dot; dy <= dot; dy++) {
-      for (let dx = -dot; dx <= dot; dx++) {
-        const x = px + dx;
-        const y = py + dy;
-        if (x < 0 || y < 0 || x >= size || y >= size) continue;
-        if (dx * dx + dy * dy > dot * dot) continue;
-        const i = (y * size + x) * 4;
-        pixels[i] = 255;
-        pixels[i + 1] = 255;
-        pixels[i + 2] = 255;
-        pixels[i + 3] = 220;
+      } else {
+        pixels[i] = PRIMARY[0];
+        pixels[i + 1] = PRIMARY[1];
+        pixels[i + 2] = PRIMARY[2];
+        pixels[i + 3] = 255;
       }
     }
   }
